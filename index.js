@@ -24,6 +24,12 @@ var SQLMaster = function () {
         return data;
     }
 
+    var clear = function () {
+        this.query = "";
+        this.tableName = "";
+        this.wValues = null;
+    }.bind(this)
+
     /**
      * Sorgunun yapılacağı tablo ismini belirler
      * @param array table
@@ -247,9 +253,12 @@ var SQLMaster = function () {
 
         switch(type) {
             default:
+                var text = this.query.trim();
+                var values = objvalues(this.wValues);
+                clear();
                 return {
-                    text: this.query.trim(),
-                    values: objvalues(this.wValues),
+                    text: text,
+                    values: values,
                 };
         }
     }
