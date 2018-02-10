@@ -49,9 +49,9 @@ var SQLMaster = function () {
         var i = 0;
         for (var key in cols) {
             if (typeof cols[key] === "string")
-                select += " " + cols[key];
+                select += cols[key];
             else
-                select += " " + cols[key][1] + " AS " + cols[key][0] + "";
+                select += cols[key][1] + " AS " + cols[key][0] + "";
 
             if (++i != cols.length)
                 select += ", ";
@@ -70,19 +70,18 @@ var SQLMaster = function () {
         if (!table || !equals) {
             throw new Error("table or equals exists");
         }
-        name = this.tableName;
+        var name = this.tableName;
         this.query += " LEFT JOIN " + table + " ON";
-        i = 0;
+        var i = 0;
         for (var key in equals) {
-            if (equals[key] instanceof Array) {
-                if (key == 'custom')
-                    this.query += " " + equals[key][0];
-                else
-                    this.query += " name.key = " + equals[key][0];
+            if (equals[key] instanceof Object) {
+                if (typeof equals[key][0] === "string" && typeof equals[key][0] === "string") {
+                    this.query += " " + equals[key][0] + " = " + equals[key][1];
+                } else {
+                    this.query += " " + name + "." + objkeys(equals[key])[0] + " = " + table + "." + objvalues(equals[key]);
+                }
             }
-            else
-                this.query += " " + name + "." + key + " = " + table + "." + equals[key];
-            if (++i != equals.length)
+            if (++i != objkeys(equals).length)
                 this.query += " AND";
         }
         return this;
@@ -98,7 +97,7 @@ var SQLMaster = function () {
         }
 
         if (wValues != null) {
-            if (typeof this.wValues === 'object')
+            if (this.wValues != null && typeof this.wValues === 'object')
                 this.wValues = Object.assign(this.wValues, wValues);
             else
                 this.wValues = wValues;
@@ -134,7 +133,7 @@ var SQLMaster = function () {
      * @param string values
     */
     this.orderBy = function (values) {
-        if (!isset(values)) {
+        if (!values) {
             throw new Error("value exists");
         }
         this.query += " ORDER BY " + values;
@@ -162,7 +161,7 @@ var SQLMaster = function () {
      * @param integer limit
     */
     this.limit = function (limit = 10) {
-        this.query += " LIMIT limit";
+        this.query += " LIMIT " + limit;
         return this;
     }
 
@@ -171,7 +170,7 @@ var SQLMaster = function () {
      * @param integer limit
     */
     this.insert = function (data) {
-        this.query = "INSERT INTO " + this.tableName + " SET";
+        this.query = "INSERT INTO " + this.tableName + " (" + objkeys(data).join(', ') + ") VALUES(";
 
         var values = {};
         var i = 0, prLen = this.wValues ? this.wValues.length : 0;
@@ -179,13 +178,15 @@ var SQLMaster = function () {
             values[':' + key] = data[key];
 
             if (prepareType === 'tag')
-                this.query += " " + key + " = :" + key + " ";
+                this.query += ":" + key;
             else
-                this.query += " " + key + " = " + prepareType + (++prLen) + " ";
+                this.query += prepareType + (++prLen);
 
             if (i++ != objvalues(data).length - 1)
-                this.query += ",";
+                this.query += ", ";
         }
+
+        this.query += ")"
 
         if (this.wValues && typeof this.wValues === 'object')
             this.wValues = Object.assign(this.wValues, values);
@@ -212,9 +213,9 @@ var SQLMaster = function () {
                 this.wValues = Object.assign(this.wValues, values);
 
             if (prepareType === 'tag')
-                this.query += " " + key + " = :" + key + " ";
+                this.query += " " + key + " = :" + key;
             else
-                this.query += " " + key + " = " + prepareType + (++prLen) + " ";
+                this.query += " " + key + " = " + prepareType + (++prLen);
 
             if (i++ != objvalues(data).length - 1)
                 this.query += ",";
@@ -232,16 +233,8 @@ var SQLMaster = function () {
      * where  ile koşullu silme yapar
      * @param integer limit
     */
-    this.delete = function (where) {
-        // where olmayan bir delete sorgusu tehlikelidir
-        if(!where)
-            return false;
-
-        this.query = "DELETE FROM " + this.tableName + " WHERE ";
-        this.query += objkeys(where)[0];
-
-        this.wValues = objvalues(where)[0];
-
+    this.delete = function () {
+        this.query = "DELETE FROM " + this.tableName;
         return this;
     }
 
