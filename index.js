@@ -172,6 +172,15 @@ var SQLMaster = function () {
     }
 
     /**
+     * Sorgunun limitini belirler default olarak 10'dur.
+     * @param integer limit
+    */
+    this.returning = function (text) {
+        this.query += " RETURNING " + text;
+        return this;
+    }
+
+    /**
      * data içindeki keylere göre insert işlemi yapar
      * @param integer limit
     */

@@ -26,6 +26,7 @@ SQLMaster.init({
 - [desc](#desc)
 - [asc](#asc)
 - [limit](#limit)
+- [returning](#returning)
 - [insert](#insert)
 - [update](#update)
 - [delete](#delete)
@@ -164,6 +165,22 @@ SQLMaster
 ])
 
 // SELECT * FROM users LIMIT 200
+```
+
+## returning
+It sets the query's 'returning'.
+
+```javascript
+SQLMaster
+.from('users')
+.insert({
+    name: "GitHub Support",
+    email: "support@github.com",
+    date: new Date(),
+})
+.returning('id')
+
+// INSERT INTO users (name, email, date) VALUES($1, $2, $3) RETURNING id
 ```
 
 ## insert
