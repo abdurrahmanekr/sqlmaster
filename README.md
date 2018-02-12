@@ -231,3 +231,6 @@ SQLMaster
 
 // DELETE FROM users WHERE id = $1
 ```
+
+## Contributors
+[@mlelyakan](https://github.com/mlelyakan) - SQLMaster Icon
