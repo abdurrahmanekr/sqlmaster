@@ -111,6 +111,11 @@ var SQLMaster = function () {
 
         var values = objkeys(this.wValues);
         var prLen = values.length;
+
+        if (wValues != null) {
+            prLen = prLen - objkeys(wValues).length + 1;
+        }
+
         for(var i = 0; i < values.length; i++) {
             if (where.match(values[i]) !== null) {
                 where = where.replace(values[i], prepareType + (prLen++));
