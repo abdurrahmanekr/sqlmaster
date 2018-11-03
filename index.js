@@ -118,7 +118,7 @@ var SQLMaster = function () {
 
         for(var i = 0; i < values.length; i++) {
             if (where.match(values[i]) !== null) {
-                where = where.replace(values[i], prepareType + (prLen++));
+                where = where.replace(new RegExp(values[i], 'g'), prepareType + (prLen++));
             }
         }
 
