@@ -269,10 +269,18 @@ var SQLMaster = function () {
             default:
                 var text = this.query.trim();
                 var values = objvalues(this.wValues);
+                var objectValues = {};
+
+                values.forEach((x, i) => {
+                    objectValues[prepareType + (i + 1)] = x;
+                });
+
                 clear();
+
                 return {
                     text: text,
                     values: values,
+                    objectValues: objectValues
                 };
         }
     }
