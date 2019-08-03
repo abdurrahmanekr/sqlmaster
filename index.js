@@ -169,10 +169,16 @@ var SQLMaster = function () {
 
     /**
      * Sorgunun limitini belirler default olarak 10'dur.
-     * @param integer limit
+     * @param integer start
+     * @param integer end
     */
-    this.limit = function (limit = 10) {
-        this.query += " LIMIT " + limit;
+    this.limit = function (start = 10, end = '') {
+        var limit = " LIMIT " + start;
+        if (end) {
+            limit += ", " + end;
+        }
+
+        this.query += limit;
         return this;
     }
 
