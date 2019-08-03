@@ -183,6 +183,15 @@ var SQLMaster = function () {
     }
 
     /**
+     * Sorgunun offset değerini belirler
+     * @param integer offset
+    */
+    this.offset = function (offset = 10) {
+        this.query += " OFFSET " + offset;
+        return this;
+    }
+
+    /**
      * Sorgunun limitini belirler default olarak 10'dur.
      * @param integer limit
     */
