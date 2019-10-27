@@ -1,28 +1,24 @@
 "use strict";
 
-var SQLMaster = function () {
+function objkeys(obj) {
+    var data = [];
+    for(var key in obj)
+        data.push(key);
+    return data;
+}
+
+function objvalues(obj) {
+    var data = [];
+    for(var key in obj)
+        data.push(obj[key]);
+    return data;
+}
+
+var SQLMasterProvider = function (obj) {
     this.query = "";
     this.tableName = "";
     this.wValues = null;
-    var prepareType = '$';
-
-    this.init = function (obj) {
-        prepareType = obj.prepareType || prepareType;
-    }
-
-    function objkeys(obj) {
-        var data = [];
-        for(var key in obj)
-            data.push(key);
-        return data;
-    }
-
-    function objvalues(obj) {
-        var data = [];
-        for(var key in obj)
-            data.push(obj[key]);
-        return data;
-    }
+    var prepareType = obj.prepareType || '$';
 
     var clear = function () {
         this.query = "";
@@ -300,5 +296,17 @@ var SQLMaster = function () {
         }
     }
 };
+
+var SQLMaster = function () {
+    var options = {};
+
+    this.from = function (tableName) {
+        return new SQLMasterProvider(options).from(tableName);
+    };
+
+    this.init = function (obj) {
+        prepareType = obj.prepareType || prepareType;
+    };
+}
 
 module.exports = new SQLMaster();
