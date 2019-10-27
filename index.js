@@ -305,7 +305,7 @@ var SQLMaster = function () {
     };
 
     this.init = function (obj) {
-        prepareType = obj.prepareType || prepareType;
+        options = obj;
     };
 }
 
