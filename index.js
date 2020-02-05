@@ -201,28 +201,60 @@ var SQLMasterProvider = function (obj) {
      * @param integer limit
     */
     this.insert = function (data) {
-        this.query = "INSERT INTO " + this.tableName + " (" + objkeys(data).join(', ') + ") VALUES(";
+        // çoklu insert
+        if (data instanceof Array && data[0] instanceof Object) {
+            this.query = "INSERT INTO " + this.tableName + " (" + objkeys(data[0]).join(', ') + ") VALUES ";
 
-        var values = {};
-        var i = 0, prLen = this.wValues ? this.wValues.length : 0;
-        for (var key in data) {
-            values[':' + key] = data[key];
+            var values = {};
+            var prLen = this.wValues ? this.wValues.length : 0;
+            for (var i = 0; i < data.length; i++) {
+                var row = [];
+                for (var key in data[i]) {
+                    values[':' + key + i] = data[i][key];
 
-            if (prepareType === 'tag')
-                this.query += ":" + key;
+                    if (prepareType === 'tag')
+                        row.push(':' + key + i);
+                    else
+                        row.push(prepareType + (++prLen));
+                }
+
+                this.query += "(" + row.join(',') + ")";
+
+                if (i != data.length - 1)
+                    this.query += ", ";
+            }
+
+            if (this.wValues && typeof this.wValues === 'object')
+                this.wValues = Object.assign(this.wValues, values);
             else
-                this.query += prepareType + (++prLen);
-
-            if (i++ != objvalues(data).length - 1)
-                this.query += ", ";
+                this.wValues = values;
         }
 
-        this.query += ")"
+        // tekli insert
+        else {
+            this.query = "INSERT INTO " + this.tableName + " (" + objkeys(data).join(', ') + ") VALUES(";
 
-        if (this.wValues && typeof this.wValues === 'object')
-            this.wValues = Object.assign(this.wValues, values);
-        else
-            this.wValues = values;
+            var values = {};
+            var i = 0, prLen = this.wValues ? this.wValues.length : 0;
+            for (var key in data) {
+                values[':' + key] = data[key];
+
+                if (prepareType === 'tag')
+                    this.query += ":" + key;
+                else
+                    this.query += prepareType + (++prLen);
+
+                if (i++ != objvalues(data).length - 1)
+                    this.query += ", ";
+            }
+
+            this.query += ")"
+
+            if (this.wValues && typeof this.wValues === 'object')
+                this.wValues = Object.assign(this.wValues, values);
+            else
+                this.wValues = values;
+        }
 
         return this;
     }
