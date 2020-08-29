@@ -1,6 +1,6 @@
 {
   "name": "sqlmaster",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "SQL string maker",
   "main": "index.js",
   "scripts": {
@@ -17,5 +17,8 @@
     "type": "git",
     "url": "git+https://github.com/abdurrahmanekr/sqlmaster.git"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "xss": "^1.0.8"
+  }
 }

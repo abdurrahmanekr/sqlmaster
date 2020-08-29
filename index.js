@@ -1,5 +1,7 @@
 "use strict";
 
+const xss = require('xss');
+
 function objkeys(obj) {
     var data = [];
     for(var key in obj)
@@ -19,6 +21,7 @@ var SQLMasterProvider = function (obj) {
     this.tableName = "";
     this.wValues = null;
     var prepareType = obj.prepareType || '$';
+    var xssFilter = obj.xssFilter;
 
     var clear = function () {
         this.query = "";
@@ -210,7 +213,7 @@ var SQLMasterProvider = function (obj) {
             for (var i = 0; i < data.length; i++) {
                 var row = [];
                 for (var key in data[i]) {
-                    values[':' + key + i] = data[i][key];
+                    values[':' + key + i] = xssFilter ? xss(data[i][key]) : data[i][key];
 
                     if (prepareType === 'tag')
                         row.push(':' + key + i);
@@ -237,7 +240,7 @@ var SQLMasterProvider = function (obj) {
             var values = {};
             var i = 0, prLen = this.wValues ? this.wValues.length : 0;
             for (var key in data) {
-                values[':' + key] = data[key];
+                values[':' + key] = xssFilter ? xss(data[key]) : data[key];
 
                 if (prepareType === 'tag')
                     this.query += ":" + key;
@@ -270,7 +273,7 @@ var SQLMasterProvider = function (obj) {
         var values = {};
         var i = 0, prLen = this.wValues ? this.wValues.length : 0;
         for (var key in data) {
-            values[':' + key] = data[key];
+            values[':' + key] = xssFilter ? xss(data[key]) : data[key];
 
             if (this.wValues && typeof this.wValues === 'object')
                 this.wValues = Object.assign(this.wValues, values);
@@ -330,10 +333,12 @@ var SQLMasterProvider = function (obj) {
 };
 
 var SQLMaster = function () {
-    var options = {};
+    var options = {
+        xssFilter: true,
+    };
 
-    this.from = function (tableName) {
-        return new SQLMasterProvider(options).from(tableName);
+    this.from = function (tableName, customOpt) {
+        return new SQLMasterProvider(customOpt || options).from(tableName);
     };
 
     this.init = function (obj) {

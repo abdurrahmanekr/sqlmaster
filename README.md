@@ -13,6 +13,7 @@ const SQLMaster = require('sqlmaster');
 
 SQLMaster.init({
     prepareType: '$',
+    xssFilter: true,
 })
 
 // prepareType: '$'   => SELECT * FROM users WHERE id = $1
