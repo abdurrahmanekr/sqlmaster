@@ -16,6 +16,12 @@ function objvalues(obj) {
     return data;
 }
 
+function xssClear(data) {
+    if (typeof data === 'string')
+        return xss(data);
+    return data;
+}
+
 var SQLMasterProvider = function (obj) {
     this.query = "";
     this.tableName = "";
@@ -213,7 +219,7 @@ var SQLMasterProvider = function (obj) {
             for (var i = 0; i < data.length; i++) {
                 var row = [];
                 for (var key in data[i]) {
-                    values[':' + key + i] = xssFilter ? xss(data[i][key]) : data[i][key];
+                    values[':' + key + i] = xssFilter ? xssClear(data[i][key]) : data[i][key];
 
                     if (prepareType === 'tag')
                         row.push(':' + key + i);
@@ -240,7 +246,7 @@ var SQLMasterProvider = function (obj) {
             var values = {};
             var i = 0, prLen = this.wValues ? this.wValues.length : 0;
             for (var key in data) {
-                values[':' + key] = xssFilter ? xss(data[key]) : data[key];
+                values[':' + key] = xssFilter ? xssClear(data[key]) : data[key];
 
                 if (prepareType === 'tag')
                     this.query += ":" + key;
@@ -273,7 +279,7 @@ var SQLMasterProvider = function (obj) {
         var values = {};
         var i = 0, prLen = this.wValues ? this.wValues.length : 0;
         for (var key in data) {
-            values[':' + key] = xssFilter ? xss(data[key]) : data[key];
+            values[':' + key] = xssFilter ? xssClear(data[key]) : data[key];
 
             if (this.wValues && typeof this.wValues === 'object')
                 this.wValues = Object.assign(this.wValues, values);
