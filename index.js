@@ -276,6 +276,11 @@ var SQLMasterProvider = function (obj) {
     this.update = function (data) {
         this.query = "UPDATE " + this.tableName + " SET";
 
+        if (typeof data === 'string') {
+            this.query += " " + data;
+            return this;
+        }
+
         var values = {};
         var i = 0, prLen = this.wValues ? this.wValues.length : 0;
         for (var key in data) {

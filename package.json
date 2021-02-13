@@ -1,6 +1,6 @@
 {
   "name": "sqlmaster",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "SQL string maker",
   "main": "index.js",
   "scripts": {
